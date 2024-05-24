@@ -13,6 +13,14 @@ The Vacation Booking API is a Node.js application that allows users to manage pr
 - Input validation using express-validator
 - Error handaling
 
+## Database diagram
+
+<img src="https://github.com/PaulaB03/VacationBookingAPI/blob/main/bd.jpg">
+
+## Flow Chart
+
+<img src="https://github.com/PaulaB03/VacationBookingAPI/blob/main/flowchart.jpg">
+
 ## Setup
 
 ### 1. Clone the repository
@@ -47,11 +55,3 @@ node app.js
 ```
 
 The application will run on *http://localhost:3000*
-
-## Database diagram
-
-<img src="https://github.com/PaulaB03/VacationBookingAPI/blob/main/bd.jpg">
-
-## Flow Chart
-
-<img src="https://github.com/PaulaB03/VacationBookingAPI/blob/main/flowchart.jpg">
