@@ -1,5 +1,5 @@
 const express = require('express');
-const { Property } = require('../sequelize');
+const { Property, Op } = require('../sequelize');
 const { validateProperty } = require('../middleware/middleware');
 const authenticateJWT = require('../middleware/authenticateJWT');
 
@@ -46,15 +46,62 @@ router.post('/', authenticateJWT, validateProperty, async (req, res) => {
  * @swagger
  * /properties:
  *   get:
- *     summary: Get all properties
+ *     summary: Get all properties with optional filters, sorting, and paging
  *     tags: [Properties]
+ *     parameters:
+ *       - in: query
+ *         name: capacity
+ *         schema:
+ *           type: integer
+ *         description: Capacity of the properties
+ *       - in: query
+ *         name: sort
+ *         schema:
+ *           type: string
+ *           enum: [asc, desc]
+ *           default: asc
+ *         description: Sort order by price
+ *       - in: query
+ *         name: offset
+ *         schema:
+ *           type: integer
+ *           default: 0
+ *         description: Number of the page
  *     responses:
  *       200:
  *         description: List of all properties
  */
 router.get('/', async (req, res) => {
-    const properties = await Property.findAll();
-    res.send(properties);
+    const { capacity, sort, limit, offset } = req.query;
+    const filter = {};
+    const order = [];
+
+    if (capacity) {
+        filter.capacity = { [Op.eq]: parseInt(capacity, 10) };
+    }
+
+    if (sort && (sort === 'asc' || sort === 'desc')) {
+        order.push(['price', sort]);
+    } else {
+        order.push(['price', 'asc']); // Default sorting
+    }
+
+    const pagination = {
+        limit: 6, 
+        offset: offset ? parseInt(offset, 10) : 0 // Default page is 0
+    };
+
+    try {
+        const properties = await Property.findAll({
+            where: filter,
+            order: order,
+            limit: pagination.limit,
+            offset: pagination.offset * pagination.limit
+        });
+        res.send(properties);
+    } catch (error) {
+        res.status(500).send({ error: 'Failed to retrieve properties.' });
+    }
 });
 
 /**
