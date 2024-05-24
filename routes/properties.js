@@ -72,7 +72,7 @@ router.post('/', authenticateJWT, validateProperty, async (req, res) => {
  *         description: List of all properties
  */
 router.get('/', async (req, res) => {
-    const { capacity, sort, limit, offset } = req.query;
+    const { capacity, sort, offset } = req.query;
     const filter = {};
     const order = [];
 

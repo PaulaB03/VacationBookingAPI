@@ -97,4 +97,35 @@ router.put('/:id', authenticateJWT, validateUserUpdate, async (req, res) => {
     res.send(user);
 });
 
+/**
+ * @swagger
+ * /users/{id}:
+ *   delete:
+ *     summary: Delete a user by ID
+ *     tags: [Users]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       200:
+ *         description: User deleted successfully
+ *       404:
+ *         description: User not found
+ *       401:
+ *         description: Access denied. No token provided.
+ */
+router.delete('/:id', authenticateJWT, async (req, res) => {
+    const user = await User.findByPk(req.params.id);
+    if (!user) {
+        return res.status(404).send({ error: 'User not found.' });
+    }
+    await user.destroy();
+    res.send({ message: 'User deleted successfully.' });
+});
+
 module.exports = router;
